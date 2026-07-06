@@ -397,6 +397,15 @@ namespace gopengl {
             GLenum (*glClientWaitSync)(GLsync sync, GLbitfield flags, GLuint64 timeout);
             void (*glGetSynciv)(GLsync sync, GLenum pname, GLsizei bufSize, GLsizei* length, GLint* values);
 
+            struct {
+                GLuint vertexArrayBinding;
+                GLuint currentProgram;
+                GLuint renderbufferBinding;
+                std::unordered_map<GLenum, GLuint> currentBuffers;
+                std::unordered_map<GLenum, GLuint> currentTextures;
+                std::unordered_map<GLenum, GLuint> currentFramebuffers;
+            } localState;
+
             bool isExtensionSupported(const char* extension) const noexcept {
                 GLint num;
                 glGetIntegerv(GL_NUM_EXTENSIONS, &num);
@@ -409,6 +418,66 @@ namespace gopengl {
                 }
 
                 return false;
+            }
+
+            GLuint glBindBufferProxy(GLenum target, GLuint buffer) {
+                auto it = localState.currentBuffers.find(target);
+
+                if (it == localState.currentBuffers.end()) {
+                    glBindBuffer(target, buffer);
+                    localState.currentBuffers.emplace(target, buffer);
+                    return 0;
+                } else if (it->second != buffer) {
+                    glBindBuffer(target, buffer);
+                    return std::exchange(it->second, buffer);
+                } else return buffer;
+            }
+
+            GLuint glBindVertexArrayProxy(GLuint array) {
+                if (localState.vertexArrayBinding != array) {
+                    glBindVertexArray(array);
+                    return std::exchange(localState.vertexArrayBinding, array);
+                } else return array;
+            }
+
+            GLuint glBindTextureProxy(GLenum target, GLuint texture) {
+                auto it = localState.currentTextures.find(target);
+
+                if (it == localState.currentTextures.end()) {
+                    glBindTexture(target, texture);
+                    localState.currentTextures.emplace(target, texture);
+                    return 0;
+                } else if (it->second != texture) {
+                    glBindTexture(target, texture);
+                    return std::exchange(it->second, texture);
+                } else return texture;
+            }
+
+            GLuint glBindFramebufferProxy(GLenum target, GLuint framebuffer) {
+                auto it = localState.currentFramebuffers.find(target);
+
+                if (it == localState.currentFramebuffers.end()) {
+                    glBindFramebuffer(target, framebuffer);
+                    localState.currentFramebuffers.emplace(target, framebuffer);
+                    return 0;
+                } else if (it->second != framebuffer) {
+                    glBindFramebuffer(target, framebuffer);
+                    return std::exchange(it->second, framebuffer);
+                } else return framebuffer;
+            }
+
+            GLuint glBindRenderbufferProxy(GLuint renderbuffer) {
+                if (localState.renderbufferBinding != renderbuffer) {
+                    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+                    return std::exchange(localState.renderbufferBinding, renderbuffer);
+                } else return renderbuffer;
+            }
+
+            GLuint glUseProgramProxy(GLuint program) {
+                if (localState.currentProgram != program) {
+                    glUseProgram(program);
+                    return std::exchange(localState.currentProgram, program);
+                } else return program;
             }
         };
         
@@ -859,9 +928,10 @@ namespace gopengl {
 
             struct UsingGuard {
                 BufferInfo* ref;
+                GLuint savedId;
 
                 UsingGuard(BufferInfo& buf) : ref(&buf) {
-                    ref->res.glRef->glBindBuffer(ref->target, ref->res.id);
+                    savedId = ref->res.glRef->glBindBufferProxy(ref->target, ref->res.id);
                 }
 
                 NO_COPY(UsingGuard)
@@ -902,7 +972,7 @@ namespace gopengl {
                 }
 
                 ~UsingGuard() {
-                    ref->res.glRef->glBindBuffer(ref->target, 0);
+                    ref->res.glRef->glBindBufferProxy(ref->target, savedId);
                 }
             };
 
@@ -924,11 +994,10 @@ namespace gopengl {
 
             struct UsingGuard {
                 VertexArrayInfo* ref;
-                GLint savedId;
+                GLuint savedId;
 
                 UsingGuard(VertexArrayInfo& vao) : ref(&vao) {
-                    ref->res.glRef->glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &savedId);
-                    ref->res.glRef->glBindVertexArray(ref->res.id);
+                    savedId = ref->res.glRef->glBindVertexArrayProxy(ref->res.id);
                 }
 
                 NO_COPY(UsingGuard)
@@ -946,7 +1015,7 @@ namespace gopengl {
                 }
 
                 ~UsingGuard() {
-                    ref->res.glRef->glBindVertexArray(savedId);
+                    ref->res.glRef->glBindVertexArrayProxy(savedId);
                 }
             };
 
@@ -1068,18 +1137,17 @@ namespace gopengl {
 
             struct UsingGuard {
                 ProgramInfo* ref;
-                GLint savedId;
+                GLuint savedId;
 
                 UsingGuard(ProgramInfo& prog) : ref(&prog) {
-                    ref->res.glRef->glGetIntegerv(GL_CURRENT_PROGRAM, &savedId);
-                    ref->res.glRef->glUseProgram(ref->res.id);
+                    savedId = ref->res.glRef->glUseProgramProxy(ref->res.id);
                 }
 
                 NO_COPY(UsingGuard)
                 NO_MOVE(UsingGuard)
 
                 ~UsingGuard() {
-                    ref->res.glRef->glUseProgram(savedId);
+                    ref->res.glRef->glUseProgramProxy(savedId);
                 }
             };
 
@@ -1171,10 +1239,11 @@ namespace gopengl {
                 TextureInfo* ref;
 
                 GLenum index;
+                GLuint savedId;
 
                 UsingGuard(TextureInfo& tex, GLenum index) : ref(&tex), index(index) {
                     ref->res.glRef->glActiveTexture(GL_TEXTURE0 + index);
-                    ref->res.glRef->glBindTexture(ref->target, ref->res.id);
+                    savedId = ref->res.glRef->glBindTextureProxy(ref->target, ref->res.id);
                 }
 
                 void image2D(GLsizei width, GLsizei height, const void* pixels, bool enableMipmap = false) {
@@ -1216,7 +1285,7 @@ namespace gopengl {
                 }
 
                 ~UsingGuard() {
-                    ref->res.glRef->glBindTexture(ref->target, 0);
+                    ref->res.glRef->glBindTextureProxy(ref->target, savedId);
                 }
             };
 
@@ -1251,18 +1320,17 @@ namespace gopengl {
             struct UsingGuard {
                 FramebufferInfo* ref;
                 GLenum target;
-                GLint savedId;
+                GLuint savedId;
                 
                 UsingGuard(FramebufferInfo& framebuffer, TextureInfo* texture, GLenum target) : ref(&framebuffer), target(target) {
                     gassert::assert(target != GL_FRAMEBUFFER, "FramebufferInfo::UsingGuard: target must not be GL_FRAMEBUFFER");
                     
-                    ref->res.glRef->glGetIntegerv(target == GL_READ_FRAMEBUFFER ? GL_READ_FRAMEBUFFER_BINDING : GL_DRAW_FRAMEBUFFER_BINDING, &savedId);
-                    ref->res.glRef->glBindFramebuffer(target, ref->res.id);
+                    savedId = ref->res.glRef->glBindFramebufferProxy(target, ref->res.id);
                     ref->res.glRef->glFramebufferTexture2D(target, GL_COLOR_ATTACHMENT0, texture->target, texture->res.id, 0);
                 }
 
                 ~UsingGuard() {
-                    ref->res.glRef->glBindFramebuffer(target, savedId);
+                    ref->res.glRef->glBindFramebufferProxy(target, savedId);
                 }
             };
 
@@ -1284,11 +1352,10 @@ namespace gopengl {
 
             struct UsingGuard {
                 RenderbufferInfo* ref;
-                GLint savedId;
+                GLuint savedId;
 
                 UsingGuard(RenderbufferInfo& renderbuffer) : ref(&renderbuffer) {
-                    ref->res.glRef->glGetIntegerv(GL_RENDERBUFFER_BINDING, &savedId);
-                    ref->res.glRef->glBindRenderbuffer(GL_RENDERBUFFER, ref->res.id);
+                    savedId = ref->res.glRef->glBindRenderbufferProxy(ref->res.id);
                 }
 
                 void storage(GLenum internalformat, GLsizei width, GLsizei height) {
@@ -1296,7 +1363,7 @@ namespace gopengl {
                 }
 
                 ~UsingGuard() {
-                    ref->res.glRef->glBindRenderbuffer(GL_RENDERBUFFER, savedId);
+                    ref->res.glRef->glBindRenderbufferProxy(savedId);
                 }
             };
 
@@ -1835,7 +1902,7 @@ void main() {
                 auto kfboGuard = getFBOGuard();
                 auto tempDrawFbo = allocTempFramebuffer();
                 auto tempDrawFboGuard = tempDrawFbo.get()->use(dst, GL_DRAW_FRAMEBUFFER);
-                gl.glBindFramebuffer(GL_READ_FRAMEBUFFER, kfboGuard.drawFbo);
+                gl.glBindFramebufferProxy(GL_READ_FRAMEBUFFER, kfboGuard.drawFbo);
                 gl.glBlitFramebuffer(
                     0, 0, dst->width, dst->height,
                     0, 0, dst->width, dst->height,
@@ -2118,19 +2185,19 @@ void main() {
 
             struct FBOGuard {
                 GL33Context* glCtx;
-                GLint readFbo, drawFbo;
+                GLuint readFbo, drawFbo;
 
                 FBOGuard(GL33Context* glCtx) : glCtx(glCtx) {
-                    glCtx->gl.glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &readFbo);
-                    glCtx->gl.glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &drawFbo);
+                    readFbo = glCtx->gl.localState.currentFramebuffers[GL_READ_FRAMEBUFFER];
+                    drawFbo = glCtx->gl.localState.currentFramebuffers[GL_DRAW_FRAMEBUFFER];
                 }
 
                 NO_COPY(FBOGuard)
                 NO_MOVE(FBOGuard)
 
                 ~FBOGuard() {
-                    glCtx->gl.glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
-                    glCtx->gl.glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFbo);
+                    glCtx->gl.glBindFramebufferProxy(GL_READ_FRAMEBUFFER, readFbo);
+                    glCtx->gl.glBindFramebufferProxy(GL_DRAW_FRAMEBUFFER, drawFbo);
                 }
             };
 
