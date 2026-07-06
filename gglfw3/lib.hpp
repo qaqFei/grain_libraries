@@ -153,8 +153,9 @@ namespace gglfw3 {
         }
 
         Window* setSwapInterval(int v) {
-            if (!window) { swapInterval = v; }
-            else {
+            swapInterval = v;
+
+            if (window) {
                 makeContextCurrent();
                 glfwSwapInterval(v);
             }
