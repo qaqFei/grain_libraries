@@ -30,6 +30,7 @@ namespace gvideoenc {
             const AVCodec* vCodec = avcodec_find_encoder(AV_CODEC_ID_H264);
             vStream = avformat_new_stream(fmtCtx, vCodec);
             vCodecCtx = avcodec_alloc_context3(vCodec);
+            vCodecCtx->color_range = AVCOL_RANGE_JPEG;
             vCodecCtx->width = width;
             vCodecCtx->height = height;
             vCodecCtx->time_base = {1, (int32)fps};
