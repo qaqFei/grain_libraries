@@ -1,0 +1,12 @@
+{
+    "requirements": {
+        "externals": [],
+        "standards": []
+    },
+    "type": "library",
+    "namespace": "gskvcache",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

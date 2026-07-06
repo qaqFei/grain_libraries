@@ -1,0 +1,22 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0",
+            "ghash_bucket==0"
+        ],
+        "standards": [
+            "string",
+            "vector",
+            "optional",
+            "filesystem",
+            "fstream",
+            "cstring"
+        ]
+    },
+    "type": "library",
+    "namespace": "gdata",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

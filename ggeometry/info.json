@@ -1,0 +1,19 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0"
+        ],
+        "standards": [
+            "cmath",
+            "numbers",
+            "utility",
+            "array"
+        ]
+    },
+    "type": "library",
+    "namespace": "ggeometry",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

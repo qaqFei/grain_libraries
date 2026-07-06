@@ -1,0 +1,17 @@
+{
+    "requirements": {
+        "externals": [
+            "gimage==0",
+            "gdata==0"
+        ],
+        "standards": [
+            "iostream"
+        ],
+        "platform_links": [],
+        "embeds": {
+            "test_image": "/test.jpg"
+        }
+    },
+    "type": "application",
+    "name": "test"
+}

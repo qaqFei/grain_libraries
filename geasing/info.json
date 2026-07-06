@@ -1,0 +1,18 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0"
+        ],
+        "standards": [
+            "cmath",
+            "numbers",
+            "algorithm"
+        ]
+    },
+    "type": "library",
+    "namespace": "geasing",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

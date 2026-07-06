@@ -1,0 +1,12 @@
+{
+    "requirements": {
+        "externals": [
+            "gyuv420frame==0"
+        ],
+        "standards": [
+            "iostream"
+        ]
+    },
+    "type": "application",
+    "name": "test"
+}

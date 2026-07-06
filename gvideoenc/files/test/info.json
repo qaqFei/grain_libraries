@@ -1,0 +1,12 @@
+{
+    "requirements": {
+        "externals": [
+            "gvideoenc==0"
+        ],
+        "standards": [],
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "application",
+    "name": "test"
+}

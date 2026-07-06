@@ -1,0 +1,16 @@
+{
+    "requirements": {
+        "externals": [],
+        "standards": [
+            "filesystem"
+        ],
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "library",
+    "namespace": "gkeeping_cwd",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

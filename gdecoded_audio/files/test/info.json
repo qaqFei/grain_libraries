@@ -1,0 +1,13 @@
+{
+    "requirements": {
+        "externals": [
+            "gdecoded_audio==0"
+        ],
+        "standards": [
+            "iostream"
+        ],
+        "platform_links": []
+    },
+    "type": "application",
+    "name": "test"
+}

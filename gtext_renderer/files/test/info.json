@@ -1,0 +1,12 @@
+{
+    "requirements": {
+        "externals": [
+            "gtext_renderer==0"
+        ],
+        "standards": [],
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "application",
+    "name": "test"
+}

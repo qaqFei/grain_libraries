@@ -1,0 +1,12 @@
+{
+    "requirements": {
+        "externals": [
+            "gregapi==0"
+        ],
+        "standards": [],
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "application",
+    "name": "test"
+}

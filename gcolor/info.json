@@ -1,0 +1,24 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0",
+            "gassert==0",
+            "gstrutils==0"
+        ],
+        "standards": [
+            "string",
+            "unordered_map",
+            "vector",
+            "optional",
+            "algorithm",
+            "numbers",
+            "cmath"
+        ]
+    },
+    "type": "library",
+    "namespace": "gcolor",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

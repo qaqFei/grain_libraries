@@ -1,0 +1,18 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0",
+            "ggeometry==0"
+        ],
+        "standards": [
+            "functional",
+            "algorithm"
+        ]
+    },
+    "type": "library",
+    "namespace": "gtime_based_anim",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

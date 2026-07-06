@@ -1,0 +1,16 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0"
+        ],
+        "standards": [
+            "vector"
+        ]
+    },
+    "type": "library",
+    "namespace": "gdecoded_rgba_texture",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

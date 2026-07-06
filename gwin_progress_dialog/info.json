@@ -1,0 +1,18 @@
+{
+    "requirements": {
+        "externals": [],
+        "standards": [],
+        "platform_links": {
+            "windows": [
+                "ole32", "uuid"
+            ]
+        },
+        "embeds": {}
+    },
+    "type": "library",
+    "namespace": "gwin_progress_dialog",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

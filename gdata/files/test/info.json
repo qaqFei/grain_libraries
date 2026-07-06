@@ -1,0 +1,15 @@
+{
+    "requirements": {
+        "externals": [
+            "gdata==0"
+        ],
+        "standards": [
+            "iostream"
+        ],
+        "embeds": {
+            "test": "/test.txt"
+        }
+    },
+    "type": "application",
+    "name": "test"
+}

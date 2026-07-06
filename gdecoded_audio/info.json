@@ -1,0 +1,20 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0",
+            "gsp==0",
+            "gbyte_rwer==0",
+            "gdata==0"
+        ],
+        "standards": [
+            "vector"
+        ],
+        "platform_links": []
+    },
+    "type": "library",
+    "namespace": "gdecoded_audio",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

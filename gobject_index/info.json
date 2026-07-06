@@ -1,0 +1,17 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0"
+        ],
+        "standards": [
+            "map",
+            "atomic"
+        ]
+    },
+    "type": "library",
+    "namespace": "gobject_index",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

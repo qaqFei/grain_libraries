@@ -1,0 +1,25 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0",
+            "gdata==0",
+            "gutf16c2utf8==0"
+        ],
+        "standards": [
+            "string",
+            "variant",
+            "vector",
+            "unordered_map",
+            "cmath",
+            "stdexcept",
+            "format",
+            "iostream"
+        ]
+    },
+    "type": "library",
+    "namespace": "gjson",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

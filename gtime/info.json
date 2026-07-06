@@ -1,0 +1,16 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0"
+        ],
+        "standards": [
+            "chrono"
+        ]
+    },
+    "type": "library",
+    "namespace": "gtime",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

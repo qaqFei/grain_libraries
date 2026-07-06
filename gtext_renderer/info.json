@@ -1,0 +1,37 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0",
+            "gsp==0",
+            "gdecoded_rgba_texture==0",
+            "gdata==0"
+        ],
+        "standards": [
+            "vector",
+            "stdexcept",
+            "algorithm",
+            "cmath",
+            "string"
+        ],
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "library",
+    "namespace": "gtext_renderer",
+    "exports": {
+        "includes": [
+            "/includes"
+        ],
+        "libs": {
+            "windows::x86_64": [
+                "/libstb_truetype_windows_x86_64.a"
+            ],
+            "windows::i386": [
+                "/libstb_truetype_windows_i386.a"
+            ],
+            "linux::x86_64": [
+                "/libstb_truetype_linux_x86_64.a"
+            ]
+        }
+    }
+}

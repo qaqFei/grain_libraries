@@ -1,0 +1,20 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0"
+        ],
+        "standards": [
+            "string",
+            "vector",
+            "algorithm",
+            "cctype",
+            "ranges"
+        ]
+    },
+    "type": "library",
+    "namespace": "gstrutils",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

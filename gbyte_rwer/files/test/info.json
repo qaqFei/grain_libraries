@@ -1,0 +1,13 @@
+{
+    "requirements": {
+        "externals": [
+            "gbyte_rwer==0",
+            "gnumeric==0"
+        ],
+        "standards": [
+            "iostream"
+        ]
+    },
+    "type": "application",
+    "name": "test"
+}

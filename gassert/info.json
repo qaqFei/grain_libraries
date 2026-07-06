@@ -1,0 +1,14 @@
+{
+    "requirements": {
+        "externals": [],
+        "standards": [
+            "iostream"
+        ]
+    },
+    "type": "library",
+    "namespace": "gassert",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

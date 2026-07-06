@@ -1,0 +1,17 @@
+{
+    "requirements": {
+        "externals": [],
+        "standards": [
+            "cstddef",
+            "limits",
+            "new",
+            "cstdlib"
+        ]
+    },
+    "type": "library",
+    "namespace": "galigned_alloc",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

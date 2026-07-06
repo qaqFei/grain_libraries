@@ -1,0 +1,38 @@
+{
+    "requirements": {
+        "externals": [
+            "gcolor==0",
+            "ggeometry==0",
+            "gsp==0",
+            "gnumeric==0",
+            "gdecoded_rgba_texture==0",
+            "gyuv420frame==0",
+            "gassert==0"
+        ],
+        "standards": [
+            "cstring",
+            "functional",
+            "stdexcept",
+            "cstdint",
+            "vector",
+            "functional",
+            "optional",
+            "string",
+            "unordered_map",
+            "span",
+            "algorithm",
+            "numbers",
+            "mutex",
+            "map",
+            "random"
+        ],
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "library",
+    "namespace": "gopengl",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

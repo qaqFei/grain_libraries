@@ -1,0 +1,13 @@
+{
+    "requirements": {
+        "externals": [
+            "gthread_safe_queue==0"
+        ],
+        "standards": [
+            "iostream",
+            "thread"
+        ]
+    },
+    "type": "application",
+    "name": "test"
+}

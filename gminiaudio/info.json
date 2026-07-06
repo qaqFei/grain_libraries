@@ -1,0 +1,35 @@
+{
+    "requirements": {
+        "externals": [
+            "gdecoded_audio==0",
+            "gsp==0",
+            "gdata==0",
+            "gvorbis==0",
+            "gnumeric==0",
+            "gaudio_engine==0"
+        ],
+        "standards": [
+            "memory"
+        ],
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "library",
+    "namespace": "gminiaudio",
+    "exports": {
+        "includes": [
+            "/includes"
+        ],
+        "libs": {
+            "windows::x86_64": [
+                "/libminiaudio_windows_x86_64.a"
+            ],
+            "windows::i386": [
+                "/libminiaudio_windows_i386.a"
+            ],
+            "linux::x86_64": [
+                "/libminiaudio_linux_x86_64.a"
+            ]
+        }
+    }
+}

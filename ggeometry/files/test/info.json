@@ -1,0 +1,12 @@
+{
+    "requirements": {
+        "externals": [
+            "ggeometry==0"
+        ],
+        "standards": [
+            "iostream"
+        ]
+    },
+    "type": "application",
+    "name": "test"
+}

@@ -1,0 +1,15 @@
+{
+    "requirements": {
+        "externals": [
+            "gwin_progress_dialog==0"
+        ],
+        "standards": [
+            "thread",
+            "chrono"
+        ],
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "application",
+    "name": "test"
+}

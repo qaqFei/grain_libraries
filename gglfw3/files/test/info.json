@@ -1,0 +1,13 @@
+{
+    "requirements": {
+        "externals": [
+            "gglfw3==0",
+            "gframerate_meter==0"
+        ],
+        "standards": [
+            "iostream"
+        ]
+    },
+    "type": "application",
+    "name": "test"
+}

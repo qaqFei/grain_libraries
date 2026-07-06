@@ -1,0 +1,14 @@
+{
+    "requirements": {
+        "externals": [
+            "gwin32ui==0"
+        ],
+        "standards": [
+            "iostream"
+        ],
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "application",
+    "name": "test"
+}

@@ -1,0 +1,17 @@
+{
+    "requirements": {
+        "externals": [],
+        "standards": [
+            "mutex",
+            "condition_variable",
+            "queue",
+            "utility"
+        ]
+    },
+    "type": "library",
+    "namespace": "gthread_safe_queue",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0",
+            "gsp==0",
+            "gdecoded_audio==0",
+            "gtime==0"
+        ],
+        "standards": [
+            "functional",
+            "vector",
+            "mutex"
+        ],
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "library",
+    "namespace": "gaudio_engine",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

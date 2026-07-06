@@ -1,0 +1,16 @@
+{
+    "requirements": {
+        "externals": [],
+        "standards": [
+            "cstdint",
+            "algorithm",
+            "limits"
+        ]
+    },
+    "type": "library",
+    "namespace": "gnumeric",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

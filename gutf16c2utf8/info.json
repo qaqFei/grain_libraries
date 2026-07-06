@@ -1,0 +1,17 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0"
+        ],
+        "standards": [
+            "string",
+            "vector"
+        ]
+    },
+    "type": "library",
+    "namespace": "gutf16c2utf8",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

@@ -1,0 +1,31 @@
+{
+    "requirements": {
+        "externals": [
+            "gkeeping_cwd==0"
+        ],
+        "standards": [
+            "memory",
+            "functional",
+            "vector",
+            "iostream",
+            "variant",
+            "algorithm",
+            "windows.h",
+            "commctrl.h",
+            "shlobj.h"
+        ],
+        "platform_links": {
+            "windows": [
+                "gdi32",
+                "comctl32"
+            ]
+        },
+        "embeds": {}
+    },
+    "type": "library",
+    "namespace": "gwin32ui",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

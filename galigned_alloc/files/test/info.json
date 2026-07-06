@@ -1,0 +1,13 @@
+{
+    "requirements": {
+        "externals": [
+            "galigned_alloc==0"
+        ],
+        "standards": [
+            "vector",
+            "iostream"
+        ]
+    },
+    "type": "application",
+    "name": "test"
+}

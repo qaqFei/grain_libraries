@@ -1,0 +1,12 @@
+{
+    "requirements": {
+        "externals": [
+            "gutf16c2utf8==0"
+        ],
+        "standards": [
+            "iostream"
+        ]
+    },
+    "type": "application",
+    "name": "test"
+}

@@ -1,0 +1,12 @@
+{
+    "requirements": {
+        "externals": [
+            "galigned_stl==0"
+        ],
+        "standards": [
+            "iostream"
+        ]
+    },
+    "type": "application",
+    "name": "test"
+}

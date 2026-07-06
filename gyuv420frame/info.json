@@ -1,0 +1,19 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0",
+            "galigned_stl==0",
+            "gsp==0"
+        ],
+        "standards": [
+            "cstring",
+            "array"
+        ]
+    },
+    "type": "library",
+    "namespace": "gyuv420frame",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

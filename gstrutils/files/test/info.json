@@ -1,0 +1,14 @@
+{
+    "requirements": {
+        "externals": [
+            "gstrutils==0"
+        ],
+        "standards": [
+            "iostream",
+            "string",
+            "vector"
+        ]
+    },
+    "type": "application",
+    "name": "test"
+}

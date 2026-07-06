@@ -1,0 +1,18 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0",
+            "gsp==0",
+            "gdata==0"
+        ],
+        "standards": [
+            "vector"
+        ]
+    },
+    "type": "library",
+    "namespace": "gbyte_rwer",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

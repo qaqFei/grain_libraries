@@ -1,0 +1,17 @@
+{
+    "requirements": {
+        "externals": [
+            "gtime==0",
+            "gnumeric==0"
+        ],
+        "standards": [
+            "deque"
+        ]
+    },
+    "type": "library",
+    "namespace": "gframerate_meter",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

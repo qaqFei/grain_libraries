@@ -1,0 +1,12 @@
+{
+    "requirements": {
+        "externals": [
+            "gtime_based_anim==0"
+        ],
+        "standards": [
+            "iostream"
+        ]
+    },
+    "type": "application",
+    "name": "test"
+}

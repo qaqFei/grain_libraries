@@ -1,0 +1,18 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0"
+        ],
+        "standards": [
+            "type_traits",
+            "cmath",
+            "optional"
+        ]
+    },
+    "type": "library",
+    "namespace": "ghash_bucket",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

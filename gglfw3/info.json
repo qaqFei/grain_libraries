@@ -1,0 +1,40 @@
+{
+    "requirements": {
+        "externals": [
+            "gsp==0",
+            "gnumeric==0"
+        ],
+        "standards": [
+            "functional",
+            "string",
+            "stdexcept",
+            "utility"
+        ],
+        "platform_links": {
+            "windows": [
+                "gdi32", "opengl32"
+            ],
+            "linux": [
+                "GL", "X11"
+            ]
+        }
+    },
+    "type": "library",
+    "namespace": "gglfw3",
+    "exports": {
+        "includes": [
+            "/includes"
+        ],
+        "libs": {
+            "windows::x86_64": [
+                "/libglfw3_windows_x86_64.a"
+            ],
+            "windows::i386": [
+                "/libglfw3_windows_i386.a"
+            ],
+            "linux::x86_64": [
+                "/libglfw3_linux_x86_64.a"
+            ]
+        }
+    }
+}

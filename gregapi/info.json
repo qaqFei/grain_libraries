@@ -1,0 +1,18 @@
+{
+    "requirements": {
+        "externals": [],
+        "standards": [
+            "string",
+            "utility",
+            "windows.h"
+        ],
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "library",
+    "namespace": "gregapi",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

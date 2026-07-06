@@ -1,0 +1,23 @@
+{
+    "requirements": {
+        "externals": [
+            "galigned_alloc==0"
+        ],
+        "standards": [
+            "vector",
+            "list",
+            "deque",
+            "forward_list",
+            "map",
+            "set",
+            "unordered_map",
+            "unordered_set"
+        ]
+    },
+    "type": "library",
+    "namespace": "galigned_stl",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "requirements": {
+        "externals": [
+            "gdecoded_rgba_texture==0"
+        ],
+        "standards": [
+            "iostream"
+        ]
+    },
+    "type": "application",
+    "name": "test"
+}

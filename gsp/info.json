@@ -1,0 +1,14 @@
+{
+    "requirements": {
+        "externals": [],
+        "standards": [
+            "atomic"
+        ]
+    },
+    "type": "library",
+    "namespace": "gsp",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

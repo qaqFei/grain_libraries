@@ -1,0 +1,35 @@
+{
+    "requirements": {
+        "externals": [
+            "gnumeric==0",
+            "gsp==0",
+            "gdecoded_audio==0"
+        ],
+        "standards": [
+            "iostream",
+            "string"
+        ],
+        "platform_links": {
+            "windows": [
+                "bcrypt", "ole32"
+            ]
+        },
+        "embeds": {}
+    },
+    "type": "library",
+    "namespace": "gvideoenc",
+    "exports": {
+        "includes": [
+            "/includes"
+        ],
+        "libs": {
+            "windows::x86_64": [
+                "/libfdk-aac.a",
+                "/libx264.a",
+                "/libavutil.a",
+                "/libavcodec.a",
+                "/libavformat.a"
+            ]
+        }
+    }
+}
