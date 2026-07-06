@@ -1832,26 +1832,15 @@ void main() {
             }
 
             void copyCurrentToTexture(TextureInfo* dst) noexcept {
-                bool isMsaa = getCurrentIsMultiSampled();
                 auto kfboGuard = getFBOGuard();
                 auto tempDrawFbo = allocTempFramebuffer();
                 auto tempDrawFboGuard = tempDrawFbo.get()->use(dst, GL_DRAW_FRAMEBUFFER);
                 gl.glBindFramebuffer(GL_READ_FRAMEBUFFER, kfboGuard.drawFbo);
-
-                if (isMsaa) {
-                    gl.glBlitFramebuffer(
-                        0, 0, dst->width, dst->height,
-                        0, 0, dst->width, dst->height,
-                        GL_COLOR_BUFFER_BIT, GL_NEAREST
-                    );
-                } else {
-                    gl.glCopyTexSubImage2D(
-                        GL_TEXTURE_2D, 0,
-                        0, 0,
-                        0, 0,
-                        dst->width, dst->height
-                    );
-                }
+                gl.glBlitFramebuffer(
+                    0, 0, dst->width, dst->height,
+                    0, 0, dst->width, dst->height,
+                    GL_COLOR_BUFFER_BIT, GL_NEAREST
+                );
             }
 
             gsp<TextureInfo> ensureTexturePingPong(TextureInfo* texture) noexcept {
@@ -1910,7 +1899,7 @@ void main() {
             }
 
             bool getCurrentIsMultiSampled() noexcept {
-                GLint samples;
+                GLint samples = 0;
                 gl.glGetIntegerv(GL_SAMPLES, &samples);
                 return samples > 1;
             }
@@ -2463,7 +2452,7 @@ void main() {
 
             uint64 allocYUVFrameSlot() {
                 while (getYUVFrameSlotsInUse() > maxConcurrentYuvSlots) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(2));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 }
 
                 std::lock_guard<std::mutex> guard(yuvFrameSlotsMutex);
