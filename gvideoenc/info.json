@@ -12,6 +12,9 @@
         "platform_links": {
             "windows": [
                 "bcrypt", "ole32"
+            ],
+            "android": [
+                "z"
             ]
         },
         "embeds": {}
@@ -24,11 +27,18 @@
         ],
         "libs": {
             "windows::x86_64": [
-                "/libfdk-aac.a",
-                "/libx264.a",
-                "/libavutil.a",
-                "/libavcodec.a",
-                "/libavformat.a"
+                "/libs/windows_x86_64/libfdk-aac.a",
+                "/libs/windows_x86_64/libx264.a",
+                "/libs/windows_x86_64/libavutil.a",
+                "/libs/windows_x86_64/libavcodec.a",
+                "/libs/windows_x86_64/libavformat.a"
+            ],
+            "android::arm64": [
+                "/libs/android_arm64/libfdk-aac.a",
+                "/libs/android_arm64/libx264.a",
+                "/libs/android_arm64/libavutil.a",
+                "/libs/android_arm64/libavcodec.a",
+                "/libs/android_arm64/libavformat.a"
             ]
         }
     }
