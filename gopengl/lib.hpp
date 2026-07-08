@@ -106,7 +106,6 @@ namespace gopengl {
         constexpr GLenum GL_INT = 0x1404;
         constexpr GLenum GL_HALF_FLOAT = 0x140B;
         constexpr GLenum GL_FIXED = 0x140C;
-        constexpr GLenum GL_DOUBLE = 0x140A;
 
         constexpr GLenum GL_VERTEX_SHADER = 0x8B31;
         constexpr GLenum GL_FRAGMENT_SHADER = 0x8B30;
@@ -284,7 +283,6 @@ namespace gopengl {
             void (*glBindBuffer)(GLenum target, GLuint buffer);
             void (*glBufferData)(GLenum target, GLsizeiptr size, const void* data, GLenum usage);
             void (*glBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, const void* data);
-            void* (*glMapBuffer)(GLenum target, GLenum access);
             void* (*glMapBufferRange)(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
             GLboolean (*glUnmapBuffer)(GLenum target);
             void (*glBindBufferRange)(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size);
@@ -348,7 +346,7 @@ namespace gopengl {
             void (*glGenerateMipmap)(GLenum target);
             void (*glActiveTexture)(GLenum texture);
             void (*glTexStorage2D)(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height);
-            void (*glTexImage2DMultisample)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
+            void (*glTexStorage2DMultisample)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
 
             void (*glGenFramebuffers)(GLsizei n, GLuint* framebuffers);
             void (*glDeleteFramebuffers)(GLsizei n, const GLuint* framebuffers);
@@ -382,15 +380,6 @@ namespace gopengl {
 
             void (*glReadPixels)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels);
             void (*glCopyTexSubImage2D)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
-            void (*glReadBuffer)(GLenum src);
-            void (*glDrawBuffer)(GLenum dst);
-
-            void (*glGenQueries)(GLsizei n, GLuint* ids);
-            void (*glDeleteQueries)(GLsizei n, const GLuint* ids);
-            void (*glBeginQuery)(GLenum target, GLuint id);
-            void (*glEndQuery)(GLenum target);
-            void (*glGetQueryObjectiv)(GLuint id, GLenum pname, GLint* params);
-            void (*glGetQueryObjectui64v)(GLuint id, GLenum pname, GLuint64* params);
 
             GLsync (*glFenceSync)(GLenum condition, GLbitfield flags);
             void (*glDeleteSync)(GLsync sync);
@@ -523,7 +512,6 @@ namespace gopengl {
             load(glBindBuffer)
             load(glBufferData)
             load(glBufferSubData)
-            load(glMapBuffer)
             load(glMapBufferRange)
             load(glUnmapBuffer)
             load(glBindBufferRange)
@@ -587,7 +575,7 @@ namespace gopengl {
             load(glGenerateMipmap)
             load(glActiveTexture)
             load(glTexStorage2D)
-            load(glTexImage2DMultisample)
+            load(glTexStorage2DMultisample)
 
             load(glGenFramebuffers)
             load(glDeleteFramebuffers)
@@ -621,15 +609,6 @@ namespace gopengl {
 
             load(glReadPixels)
             load(glCopyTexSubImage2D)
-            load(glReadBuffer)
-            load(glDrawBuffer)
-
-            load(glGenQueries)
-            load(glDeleteQueries)
-            load(glBeginQuery)
-            load(glEndQuery)
-            load(glGetQueryObjectiv)
-            load(glGetQueryObjectui64v)
 
             load(glFenceSync)
             load(glDeleteSync)
@@ -753,7 +732,6 @@ namespace gopengl {
         struct TextureInfo;
         struct FramebufferInfo;
         struct RenderbufferInfo;
-        struct QueryInfo;
         struct SyncInfo;
     
         struct Vertex {
@@ -952,8 +930,8 @@ namespace gopengl {
                     UsingGuard* ref;
                     void* data;
 
-                    MappingGuard(UsingGuard& buffer, GLbitfield access = GL_READ_WRITE) : ref(&buffer) {
-                        data = ref->ref->res.glRef->glMapBuffer(ref->ref->target, access);
+                    MappingGuard(UsingGuard& buffer, GLsizei offset, GLsizei length, GLbitfield access) : ref(&buffer) {
+                        data = ref->ref->res.glRef->glMapBufferRange(ref->ref->target, offset, length, access);
                     }
 
                     NO_COPY(MappingGuard)
@@ -964,12 +942,12 @@ namespace gopengl {
                     }
                 };
 
-                MappingGuard map(GLbitfield access) {
-                    return MappingGuard(*this, access);
+                MappingGuard map(GLsizei offset, GLsizei length, GLbitfield access) {
+                    return MappingGuard(*this, offset, length, access);
                 }
 
-                gsp<MappingGuard> mapSp(GLbitfield access) {
-                    auto* guard = new MappingGuard(*this, access);
+                gsp<MappingGuard> mapSp(GLsizei offset, GLsizei length, GLbitfield access) {
+                    auto* guard = new MappingGuard(*this, offset, length, access);
                     return gsp<MappingGuard>(guard);
                 }
 
@@ -1042,6 +1020,10 @@ namespace gopengl {
                 if (res.glRef->isGles) {
                     source = gstrutils::replaceStringWith(source, "#version 330 core", "#version 300 es\nprecision highp float;");
                 }
+
+                auto pos = source.find("#version");
+                if (pos == std::string::npos) throw std::runtime_error("No #version directive found in shader source");
+                source = source.substr(pos);
 
                 const GLchar* ptr = (GLchar*)source.c_str();
                 GLint len = source.length();
@@ -1286,7 +1268,7 @@ namespace gopengl {
                 }
 
                 void image2DMultisample(GLsizei width, GLsizei height, GLsizei samples) {
-                    ref->res.glRef->glTexImage2DMultisample(ref->target, samples, GL_RGBA8, width, height, GL_TRUE);
+                    ref->res.glRef->glTexStorage2DMultisample(ref->target, samples, GL_RGBA8, width, height, GL_TRUE);
                     ref->width = width; ref->height = height;
                 }
 
@@ -1380,48 +1362,6 @@ namespace gopengl {
             gsp<UsingGuard> useSp() {
                 auto* guard = new UsingGuard(*this);
                 return gsp<UsingGuard>(guard);
-            }
-        };
-
-        struct QueryInfo {
-            QueryInfo() = default;
-            NO_COPY(QueryInfo)
-
-            GlResource<[](GL33CoreInterface* glRef, GLuint id) { glRef->glDeleteQueries(1, &id); }> res;
-
-            struct UsingGuard {
-                QueryInfo* ref;
-                GLenum target;
-
-                UsingGuard(QueryInfo& query, GLenum target) : ref(&query), target(target) {
-                    ref->res.glRef->glBeginQuery(target, ref->res.id);
-                }
-
-                ~UsingGuard() {
-                    ref->res.glRef->glEndQuery(target);
-                }
-            };
-
-            UsingGuard use(GLenum target = GL_TIME_ELAPSED) {
-                return UsingGuard(*this, target);
-            }
-
-            GLint getResultInt() const {
-                GLint result = 0;
-                res.glRef->glGetQueryObjectiv(res.id, GL_QUERY_RESULT, &result);
-                return result;
-            }
-
-            GLuint64 getResultUInt64() const {
-                GLuint64 result = 0;
-                res.glRef->glGetQueryObjectui64v(res.id, GL_QUERY_RESULT, &result);
-                return result;
-            }
-
-            bool isResultAvailable() const {
-                GLint result = 0;
-                res.glRef->glGetQueryObjectiv(res.id, GL_QUERY_RESULT_AVAILABLE, &result);
-                return result != 0;
             }
         };
 
@@ -1541,13 +1481,6 @@ namespace gopengl {
                 info->res.glRef = &gl;
                 gl.glGenRenderbuffers(1, &info->res.id);
                 return gsp<RenderbufferInfo>(info);
-            }
-
-            gsp<QueryInfo> createQuery() {
-                auto* info = new QueryInfo();
-                info->res.glRef = &gl;
-                gl.glGenQueries(1, &info->res.id);
-                return gsp<QueryInfo>(info);
             }
 
             gsp<SyncInfo> createSync(GLenum condition = GL_SYNC_GPU_COMMANDS_COMPLETE, GLbitfield flags = 0) {
@@ -2032,9 +1965,9 @@ void main() {
                         gsp<BufferInfo::UsingGuard> pboGuard;
                         gsp<BufferInfo::UsingGuard::MappingGuard> mapGuard;
 
-                        UsingGuard(const gsp<BufferInfo>& pbo)
+                        UsingGuard(const gsp<BufferInfo>& pbo, GLsizei size)
                             : pboGuard(pbo->useSp())
-                            , mapGuard(pboGuard->mapSp(GL_READ_ONLY))
+                            , mapGuard(pboGuard->mapSp(0, size, GL_MAP_READ_BIT))
                         {}
                         
                         NO_COPY(UsingGuard)
@@ -2047,7 +1980,7 @@ void main() {
                     };
 
                     UsingGuard use() {
-                        return UsingGuard(pbo);
+                        return UsingGuard(pbo, size);
                     }
                 };
 
@@ -2313,9 +2246,6 @@ void main() {
 
                 gl.glEnable(GL_BLEND);
                 gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-                gl.glReadBuffer(GL_COLOR_ATTACHMENT0);
-                gl.glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
                 vertexPool = VertexPool::Make();
             }
