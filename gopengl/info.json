@@ -7,7 +7,8 @@
             "gnumeric==0",
             "gdecoded_rgba_texture==0",
             "gyuv420frame==0",
-            "gassert==0"
+            "gassert==0",
+            "gstrutils==0"
         ],
         "standards": [
             "cstring",

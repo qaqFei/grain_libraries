@@ -397,6 +397,8 @@ namespace gopengl {
             GLenum (*glClientWaitSync)(GLsync sync, GLbitfield flags, GLuint64 timeout);
             void (*glGetSynciv)(GLsync sync, GLenum pname, GLsizei bufSize, GLsizei* length, GLint* values);
 
+            bool isGles = false;
+
             struct {
                 GLuint vertexArrayBinding;
                 GLuint currentProgram;
@@ -1036,7 +1038,11 @@ namespace gopengl {
             GlResource<[](GL33CoreInterface* glRef, GLuint id) { glRef->glDeleteShader(id); }> res;
             GLenum type;
 
-            void source(const std::string& source) {
+            void source(std::string source) {
+                if (res.glRef->isGles) {
+                    source = gstrutils::replaceStringWith(source, "#version 330 core", "#version 300 es\nprecision highp float;");
+                }
+
                 const GLchar* ptr = (GLchar*)source.c_str();
                 GLint len = source.length();
                 res.glRef->glShaderSource(res.id, 1, &ptr, &len);
