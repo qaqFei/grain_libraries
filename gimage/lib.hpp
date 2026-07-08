@@ -1,3 +1,7 @@
+#ifdef GIMAGE_NO_STATIC
+#define STB_IMAGE_IMPLEMENTATION
+#endif
+
 #include <gimage/stb_image.h>
 
 namespace gimage {

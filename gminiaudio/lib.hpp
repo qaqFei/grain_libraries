@@ -1,3 +1,7 @@
+#ifdef GMINIAUDIO_NO_STATIC
+#define MINIAUDIO_IMPLEMENTATION
+#endif
+
 #include <gminiaudio/miniaudio.h>
 
 namespace gminiaudio {

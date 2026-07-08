@@ -1,4 +1,7 @@
+#ifndef GVORBIS_NO_STATIC
 #define STB_VORBIS_HEADER_ONLY
+#endif
+
 #include <gvorbis/stb_vorbis.c>
 
 namespace gvorbis {

@@ -1,3 +1,7 @@
+#ifdef GTEXT_RENDERER_NO_STATIC
+#define STB_TRUETYPE_IMPLEMENTATION
+#endif
+
 #include <gtext_renderer/stb_truetype.h>
 
 namespace gtext_renderer {
