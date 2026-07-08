@@ -25,7 +25,8 @@
             "numbers",
             "mutex",
             "map",
-            "random"
+            "random",
+            "thread"
         ],
         "platform_links": [],
         "embeds": {}
