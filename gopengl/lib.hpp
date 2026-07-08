@@ -1018,7 +1018,7 @@ namespace gopengl {
 
             void source(std::string source) {
                 if (res.glRef->isGles) {
-                    source = gstrutils::replaceStringWith(source, "#version 330 core", "#version 300 es\nprecision highp float;");
+                    source = gstrutils::replaceStringWith(source, "#version 330 core", "#version 300 es\nprecision highp float;\nprecision highp int;");
                 }
 
                 auto pos = source.find("#version");
