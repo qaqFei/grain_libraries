@@ -4,11 +4,18 @@
 
 namespace galigned_alloc {
     void* aligned_alloc(size_t alignment, size_t size) {
-        #ifdef _WIN32
+        if (alignment < alignof(std::max_align_t)) alignment = alignof(std::max_align_t);
+        size = ((size + alignment - 1) / alignment) * alignment;
+
+        #if defined(_WIN32)
             return _aligned_malloc(size, alignment);
+        #elif defined(__ANDROID__)
+            void* ptr = nullptr;
+            if (posix_memalign(&ptr, alignment, size) != 0) {
+                return nullptr;
+            }
+            return ptr;
         #else
-            if (alignment < alignof(std::max_align_t)) alignment = alignof(std::max_align_t);
-            size = ((size + alignment - 1) / alignment) * alignment;
             return std::aligned_alloc(alignment, size);
         #endif
     }
