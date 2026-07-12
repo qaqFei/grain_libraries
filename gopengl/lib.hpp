@@ -1755,6 +1755,7 @@ in vec4 vColor;
 
 uniform vec4 uColor;
 uniform sampler2D uTexture;
+uniform float uRingRadius;
 
 out vec4 outColor;
 
@@ -1763,8 +1764,16 @@ void main() {
 
     float dist = length(fragTexCoord - vec2(0.5));
     float edgeWidth = fwidth(dist);
-    float alpha = 1.0 - smoothstep(0.5 - edgeWidth, 0.5, dist);
-    outColor.a *= alpha;
+
+    float outerMask = 1.0 - smoothstep(0.5 - edgeWidth, 0.5, dist);
+    float innerMask = 1.0;
+    
+    if (uRingRadius > 0.0) {
+        innerMask = smoothstep(uRingRadius - edgeWidth, uRingRadius + edgeWidth, dist);
+    }
+    
+    float finalAlpha = outerMask * innerMask;
+    outColor.a *= finalAlpha;
 }
 )" }.defaultColorVert());
                 }
