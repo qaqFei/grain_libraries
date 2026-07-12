@@ -188,6 +188,7 @@ namespace gcolor {
         }
 
         Color applyAlpha(float64 alpha) const noexcept { return Color { r, g, b, a * alpha }; }
+        Color setAlpha(float64 alpha) const noexcept { return Color { r, g, b, alpha }; }
 
         Color operator*(const Color& c) const noexcept { return Color { r * c.r, g * c.g, b * c.b, a * c.a }; }
         Color operator*(float64 v) const noexcept { return Color { r * v, g * v, b * v, a * v }; }
