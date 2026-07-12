@@ -921,11 +921,6 @@ namespace gopengl {
                     ref->res.glRef->glBufferData(ref->target, size, data, usage);
                 }
 
-                template <typename T>
-                void data(std::span<const T> data, GLenum usage) {
-                    data(ref->target, data.size() * sizeof(T), data.data(), usage);
-                }
-
                 struct MappingGuard {
                     UsingGuard* ref;
                     void* data;
@@ -1059,23 +1054,18 @@ namespace gopengl {
             uint64 currentIndex;
             uint64 frameSig;
 
-            using LayoutCreator = std::function<VertexLayout()>;
-            void resize(uint64 size,const LayoutCreator& creator) {
-                layouts.resize(size);
-                for (auto& layout : layouts) layout = creator();
-            }
-
-            using ConfigureFunc = std::function<void(VertexArrayInfo*, BufferInfo*)>;
-            void configure(const ConfigureFunc& func) {
-                for (auto& layout : layouts) {
-                    func(layout.vao.get(), layout.vbo.get());
-                }
-            }
+            using LayoutCreator = std::function<void(VertexLayout*)>;
+            LayoutCreator creator;
 
             void checkAndNext(uint64 newFrameSig) noexcept {
-                if (frameSig != newFrameSig) {
+                if (newFrameSig - frameSig >= 4) {
                     frameSig = newFrameSig;
-                    currentIndex = (currentIndex + 1) % layouts.size();
+                    currentIndex = 0;
+                } else currentIndex++;
+
+                while (currentIndex >= layouts.size()) {
+                    auto& layout = layouts.emplace_back();
+                    creator(&layout);
                 }
             }
 
@@ -1600,10 +1590,11 @@ void main() {
                 prog->attachShader(frag.get());
                 if (!prog->link(&log)) throw std::runtime_error("program link: " + log);
 
-                prog->vertexLayoutPool.resize(8, [&]() { return VertexLayout { .vao = createVertexArray(), .vbo = createBuffer() }; });
-                prog->vertexLayoutPool.configure([&](VertexArrayInfo* vao, BufferInfo* vbo) {
-                    config.vertConfigurer(prog.get(), vao, vbo);
-                });
+                prog->vertexLayoutPool.creator = [this, vertConfigurer = config.vertConfigurer, prog = prog.get()](VertexLayout* layout) {
+                    layout->vao = createVertexArray();
+                    layout->vbo = createBuffer();
+                    vertConfigurer(prog, layout->vao.get(), layout->vbo.get());
+                };
 
                 prog->bufferFiller = [](ProgramInfo* prog, const VertexLayout& vertexLayout, VertexPool::AllocResult& vertices) {
                     auto vaoGuard = vertexLayout.vao->use();
@@ -1611,7 +1602,7 @@ void main() {
                     vboGuard.data(
                         vertices.count * sizeof(Vertex),
                         vertices.vertices,
-                        GL_DYNAMIC_DRAW
+                        GL_STREAM_DRAW
                     );
                 };
 
