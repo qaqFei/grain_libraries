@@ -867,6 +867,22 @@ namespace gopengl {
             void addRectCentered(const GLvec2& center, const GLvec2& radius, const GLvec2& uvCenter, const GLvec2& uvRadius, const GLvec4& color = GLvec4::White()) noexcept {
                 addRect(center - radius, radius * 2, uvCenter - uvRadius, uvRadius * 2, color);
             }
+
+            void addGradientRect(const GLvec2& position, const GLvec2& size, const GLvec2& uvPosition, const GLvec2& uvSize, const std::array<GLvec4, 4>& colors) noexcept {
+                if (size.x <= 0 || size.y <= 0) return;
+
+                *vertices.next() = { position, uvPosition, colors[0] };
+                *vertices.next() = { position + GLvec2 { size.x, 0 }, uvPosition + GLvec2 { uvSize.x, 0 }, colors[1] };
+                *vertices.next() = { position + size, uvPosition + uvSize, colors[3] };
+
+                *vertices.next() = { position, uvPosition, colors[0] };
+                *vertices.next() = { position + GLvec2 { 0, size.y }, uvPosition + GLvec2 { 0, uvSize.y }, colors[2] };
+                *vertices.next() = { position + size, uvPosition + uvSize, colors[3] };
+            }
+
+            void addGradientRectCentered(const GLvec2& center, const GLvec2& radius, const GLvec2& uvCenter, const GLvec2& uvRadius, const std::array<GLvec4, 4>& colors) noexcept {
+                addGradientRect(center - radius, radius * 2, uvCenter - uvRadius, uvRadius * 2, colors);
+            }
         };
 
         template <auto Deleter, typename T = GLuint>
