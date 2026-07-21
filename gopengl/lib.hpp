@@ -1511,12 +1511,14 @@ in vec4 inColor;
 
 out vec2 fragTexCoord;
 out vec4 vColor;
+out vec2 vPosition;
 
 void main() {
     gl_Position = vec4(inPosition, 0.0, 1.0);
 
     fragTexCoord = inTexCoord;
     vColor = inColor;
+    vPosition = inPosition;
 }
 )";
                     vertConfigurer = [](ProgramInfo* prog, VertexArrayInfo* vao, BufferInfo* vbo) {
@@ -1739,12 +1741,7 @@ void main() {
     float edgeWidth = fwidth(dist);
 
     float outerMask = 1.0 - smoothstep(0.5 - edgeWidth, 0.5, dist);
-    float innerMask = 1.0;
-    
-    if (uRingRadius > 0.0) {
-        innerMask = smoothstep(uRingRadius - edgeWidth, uRingRadius + edgeWidth, dist);
-    }
-    
+    float innerMask = uRingRadius > 0.0 ?  smoothstep(uRingRadius - edgeWidth, uRingRadius + edgeWidth, dist) : 1.0;
     float finalAlpha = outerMask * innerMask;
     outColor.a *= finalAlpha;
 }
