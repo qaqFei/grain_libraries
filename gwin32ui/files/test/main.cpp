@@ -33,8 +33,12 @@ void entrypoint() {
         }
     }));
 
-    win->registerWidget(Widgets::Label({
-        .text = L"LABEL 1!"
+    int label = win->registerWidget(Widgets::Label({
+        .text = L"LABEL 1!",
+        .onClick = [&]() {
+            std::cout << "LABEL CLICKED!" << std::endl;
+            WidgetStatics::Label::setText(win.get(), win->refWidget(label), L"LABEL 2!");
+        }
     }));
 
     int checkbox1 = win->registerWidget(Widgets::CheckBox({

@@ -115,6 +115,7 @@ namespace gwin32ui {
 
             struct {
                 std::wstring text;
+                std::function<void()> onClick;
             } label;
 
             struct {
@@ -347,6 +348,15 @@ namespace gwin32ui {
             }
         };
 
+        struct Label {
+            static void setText(Win32Window* win, Widget& widget, const std::wstring& text) {
+                widget.store.label.text = text;
+                SetWindowTextW(widget.store.hWnd, text.c_str());
+                win->doGrid();
+                win->resizeToGridBounds();
+            }
+        };
+
         struct CheckBox {
             static void toggle(Widget& widget, bool value) {
                 SendMessage(widget.store.hWnd, BM_SETCHECK, value ? BST_CHECKED : BST_UNCHECKED, 0);
@@ -433,6 +443,7 @@ namespace gwin32ui {
 
         struct LabelConfig {
             std::wstring text = L"TEXT";
+            std::function<void()> onClick;
         };
 
         static Widget Label(const LabelConfig& config) {
@@ -440,6 +451,7 @@ namespace gwin32ui {
                 .store = {
                     .label = {
                         .text = config.text,
+                        .onClick = config.onClick
                     }
                 },
 
@@ -448,13 +460,23 @@ namespace gwin32ui {
                     self->store.id = createrConfig.parent->requestNewWidgetId();
                     self->store.hWnd = CreateWindowW(
                         L"STATIC", self->store.label.text.c_str(),
-                        SS_CENTER | SS_CENTERIMAGE | WS_VISIBLE | WS_CHILD,
+                        SS_CENTER | SS_CENTERIMAGE | WS_VISIBLE | WS_CHILD | SS_NOTIFY,
                         0, 0, 0, 0,
                         createrConfig.parent->hWnd,
                         (HMENU)(UINT_PTR)self->store.id,
                         createrConfig.parent->wc.hInstance,
                         nullptr
                     );
+                },
+
+                .onCommand = [](Widget* self, Widget::OnCommandConfig onCommandConfig) {
+                    if (LOWORD(onCommandConfig.wParam) == self->store.id) {
+                        if (HIWORD(onCommandConfig.wParam) == STN_CLICKED) {
+                            if (self->store.label.onClick) {
+                                self->store.label.onClick();
+                            }
+                        }
+                    }
                 },
 
                 .autoSizer = [](Widget* self) {
