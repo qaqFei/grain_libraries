@@ -1,10 +1,10 @@
 namespace gassert {
     #ifdef GRAIN_IS_RELEASE
-        void assert(bool, const std::string&) noexcept {}
+        void asrt(bool, const std::string&) noexcept {}
     #else
-        void assert(bool condition, const std::string& msg) {
+        void asrt(bool condition, const std::string& msg) {
             if (!condition) {
-                std::cerr << "Assertion failed: " << msg << std::endl;
+                std::cerr << std::format("Assertion failed ({}:{}): {}", __FILE__, __LINE__, msg) << std::endl;
                 std::abort();
             }
         }

@@ -2,7 +2,8 @@
     "requirements": {
         "externals": [],
         "standards": [
-            "iostream"
+            "iostream",
+            "format"
         ]
     },
     "type": "library",

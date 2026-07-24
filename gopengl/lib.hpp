@@ -781,7 +781,7 @@ namespace gopengl {
                 uint64 offset;
 
                 Vertex* next() noexcept {
-                    gassert::assert(offset < count, "VertexPool::AllocResult::next() called after end of allocation");
+                    gassert::asrt(offset < count, "VertexPool::AllocResult::next() called after end of allocation");
                     return &vertices[offset++];
                 }
 
@@ -1317,7 +1317,7 @@ namespace gopengl {
                 GLuint savedId;
                 
                 UsingGuard(FramebufferInfo& framebuffer, TextureInfo* texture, GLenum target) : ref(&framebuffer), target(target) {
-                    gassert::assert(target != GL_FRAMEBUFFER, "FramebufferInfo::UsingGuard: target must not be GL_FRAMEBUFFER");
+                    gassert::asrt(target != GL_FRAMEBUFFER, "FramebufferInfo::UsingGuard: target must not be GL_FRAMEBUFFER");
                     
                     savedId = ref->res.glRef->glBindFramebufferProxy(target, ref->res.id);
                     ref->res.glRef->glFramebufferTexture2D(target, GL_COLOR_ATTACHMENT0, texture->target, texture->res.id, 0);
@@ -2469,8 +2469,8 @@ void main() {
             gsp<GL33Context> glCtx;
 
             void check() {
-                gassert::assert(!!renderer, "TextManager: renderer is not set");
-                gassert::assert(!!glCtx, "TextManager: glCtx is not set");
+                gassert::asrt(!!renderer, "TextManager: renderer is not set");
+                gassert::asrt(!!glCtx, "TextManager: glCtx is not set");
             }
 
             struct GetTextureResult {

@@ -304,7 +304,7 @@ namespace gcolor {
                 }
             }
 
-            gassert::assert(false, "ColorLink::get failed");
+            gassert::asrt(false, "ColorLink::get failed");
             return {};
         }
     };
