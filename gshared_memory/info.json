@@ -1,0 +1,32 @@
+{
+    "requirements": {
+        "externals": [
+            "gsp==0"
+        ],
+        "standards": {
+            "windows": [
+                "windows.h"
+            ],
+            "linux,macos,android": [
+                "fcntl.h",
+                "sys/stat.h",
+                "sys/mman.h",
+                "unistd.h"
+            ],
+            "default": [
+                "string",
+                "stdexcept",
+                "unordered_map",
+                "mutex"
+            ]
+        },
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "library",
+    "namespace": "gshared_memory",
+    "exports": {
+        "includes": [],
+        "libs": []
+    }
+}

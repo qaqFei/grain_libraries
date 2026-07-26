@@ -1,0 +1,14 @@
+{
+    "requirements": {
+        "externals": [
+            "gshared_memory==0"
+        ],
+        "standards": [
+            "iostream"
+        ],
+        "platform_links": [],
+        "embeds": {}
+    },
+    "type": "application",
+    "name": "test"
+}
