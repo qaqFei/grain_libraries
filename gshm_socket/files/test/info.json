@@ -2,12 +2,14 @@
     "requirements": {
         "externals": [
             "gshm_socket==0",
-            "gnumeric==0"
+            "gnumeric==0",
+            "gsp==0"
         ],
         "standards": [
             "string",
             "thread",
-            "iostream"
+            "iostream",
+            "unordered_map"
         ],
         "platform_links": [],
         "embeds": {}
