@@ -158,6 +158,12 @@ namespace gshm_socket {
             waitForSignal(&state.shutdownAck);
         }
 
+        void runForever() {
+            while (!getShutdown()) {
+                recv();
+            }
+        }
+
         ~Server() {
             if (!mainMemory) return;
             shutdown();
@@ -235,6 +241,12 @@ namespace gshm_socket {
             if (readSignal(&state.shutdown)) {
                 shutdown = true;
                 writeSignal(&state.shutdownAck, true);
+            }
+        }
+
+        void runForever() {
+            while (!getShutdown()) {
+                recv();
             }
         }
 

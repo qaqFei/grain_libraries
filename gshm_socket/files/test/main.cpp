@@ -27,10 +27,7 @@ void entrypoint() {
             }
         }).detach();
 
-        while (!server->getShutdown()) {
-            server->recv();
-        }
-
+        server->runForever();
         std::cout << "server shutdown" << std::endl;
     } catch (...) {
         auto client = Client::Make(name, [](const void* ptr, uint64 size) {
@@ -49,10 +46,7 @@ void entrypoint() {
             }
         }).detach();
 
-        while (!client->getShutdown()) {
-            client->recv();
-        }
-
+        client->runForever();
         std::cout << "server shutdown" << std::endl;
     }
 }
