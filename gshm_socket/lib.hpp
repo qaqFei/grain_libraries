@@ -5,6 +5,8 @@ namespace gshm_socket {
 
     using DataCallback = std::function<void(const void*, uint64)>;
 
+    static bool enableBusyWait = false;
+
     namespace {
         static constexpr uint64 SHM_SOCKET_VERSION = 1;
 
@@ -27,19 +29,20 @@ namespace gshm_socket {
             bool shutdownAck;
         };
 
+        void sleepForAWhile() {
+            if (enableBusyWait) return;
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+
         void waitForSignal(bool* signal) {
             __sync_synchronize();
-            while (!*signal) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
-            }
+            while (!*signal) sleepForAWhile();
             __sync_synchronize();
         }
 
-        void waitForSignal(bool* signal1, bool* signal2) {
+        void waitForSignal(bool* signal1, bool* signal2) { // 有一个完成即可
             __sync_synchronize();
-            while (!*signal1 && !*signal2) { // 有一个完成即可
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
-            }
+            while (!*signal1 && !*signal2) sleepForAWhile();
             __sync_synchronize();
         }
 

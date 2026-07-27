@@ -102,3 +102,5 @@ extern "C" GRAIN_EXPORT bool clientGetShutdown(void* client) { return clients[(u
 extern "C" GRAIN_EXPORT void clientSend(void* client, const void* data, uint64 size) { clients[(uint64)client]->send(data, size); }
 extern "C" GRAIN_EXPORT void clientRecv(void* client) { clients[(uint64)client]->recv(); }
 extern "C" GRAIN_EXPORT void destroyClient(void* client) { clients.erase((uint64)client); }
+
+extern "C" GRAIN_EXPORT void setBusywait(bool value) { gshm_socket::enableBusyWait = value; }
