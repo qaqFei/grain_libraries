@@ -5,28 +5,28 @@ namespace gshm_socket {
 
     using DataCallback = std::function<void(const void*, uint64)>;
 
-    static bool enableBusyWait = false;
+    static volatile bool enableBusyWait = false;
 
     namespace {
         static constexpr uint64 SHM_SOCKET_VERSION = 1;
 
         struct alignas(8) ShmState {
-            uint64 version = SHM_SOCKET_VERSION;
+            volatile uint64 version = SHM_SOCKET_VERSION;
 
-            bool isNotConnected;
+            volatile bool isNotConnected;
 
-            bool senderReady;
-            bool senderReadyAck;
-            uint64 senderSeq;
-            uint64 senderDataSize;
+            volatile bool senderReady;
+            volatile bool senderReadyAck;
+            volatile uint64 senderSeq;
+            volatile uint64 senderDataSize;
 
-            bool receiverReady;
-            bool receiverReadyAck;
-            uint64 receiverSeq;
-            uint64 receiverDataSize;
+            volatile bool receiverReady;
+            volatile bool receiverReadyAck;
+            volatile uint64 receiverSeq;
+            volatile uint64 receiverDataSize;
 
-            bool shutdown;
-            bool shutdownAck;
+            volatile bool shutdown;
+            volatile bool shutdownAck;
         };
 
         void sleepForAWhile() {
@@ -34,26 +34,26 @@ namespace gshm_socket {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
-        void waitForSignal(bool* signal) {
+        void waitForSignal(volatile bool* signal) {
             __sync_synchronize();
             while (!*signal) sleepForAWhile();
             __sync_synchronize();
         }
 
-        void waitForSignal(bool* signal1, bool* signal2) { // 有一个完成即可
+        void waitForSignal(volatile bool* signal1, volatile bool* signal2) { // 有一个完成即可
             __sync_synchronize();
             while (!*signal1 && !*signal2) sleepForAWhile();
             __sync_synchronize();
         }
 
-        bool readSignal(bool* signal) {
+        bool readSignal(volatile bool* signal) {
             __sync_synchronize();
             bool value = *signal;
             __sync_synchronize();
             return value;
         }
 
-        void writeSignal(bool* signal, bool value) {
+        void writeSignal(volatile bool* signal, bool value) {
             __sync_synchronize();
             *signal = value;
             __sync_synchronize();
@@ -76,7 +76,13 @@ namespace gshm_socket {
             return std::format("gshm_socket_data_{}", seq);
         }
 
-        void doSend(bool* ready, bool* readyAck, uint64* seq, uint64* sizeDst, const void* data, uint64 size, gsp<SharedMemory>* mem) {
+        void doSend(
+            volatile bool* ready, volatile bool* readyAck,
+            volatile uint64* seq,
+            volatile uint64* sizeDst,
+            const void* data, uint64 size,
+            gsp<SharedMemory>* mem
+        ) {
             waitForSignal(readyAck);
 
             if (!*mem || (*mem)->getSize() < size || (*mem)->getSize() > size * 2 + 1024 * 1024) {
@@ -91,7 +97,13 @@ namespace gshm_socket {
             writeSignal(ready, true);
         }
 
-        void doRecv(bool* ready, bool* readyAck, uint64* seq, uint64* size, bool* shutdown, const DataCallback& callback) {
+        void doRecv(
+            volatile bool* ready, volatile bool* readyAck,
+            volatile uint64* seq,
+            volatile uint64* size,
+            volatile bool* shutdown,
+            const DataCallback& callback
+        ) {
             waitForSignal(ready, shutdown);
 
             if (readSignal(shutdown)) {
