@@ -9,6 +9,23 @@ namespace gshared_memory {
     void unmap(Handle handle, void* ptr);
     void destroy(Handle handle);
 
+    namespace {
+        size_t getPageSize() {
+            #ifdef _WIN32
+            SYSTEM_INFO si;
+            GetSystemInfo(&si);
+            return si.dwPageSize;
+            #else
+            return sysconf(_SC_PAGESIZE);
+            #endif
+        }
+
+        size_t roundUpToPageSize(size_t size) {
+            auto pageSize = getPageSize();
+            return ((size + pageSize - 1) / pageSize) * pageSize;
+        }
+    }
+
     #ifdef _WIN32
     static_assert(sizeof(Handle) >= sizeof(HANDLE), "Handle must be at least as large as HANDLE");
 
@@ -31,6 +48,8 @@ namespace gshared_memory {
         if (isExists(name)) {
             throw std::runtime_error("shared memory already exists");
         }
+
+        size = roundUpToPageSize(size);
 
         HANDLE hMapFile = CreateFileMappingA(
             INVALID_HANDLE_VALUE,
@@ -128,6 +147,7 @@ namespace gshared_memory {
             throw std::runtime_error("failed to create shared memory");
         }
 
+        size = roundUpToPageSize(size);
         ftruncate(fd, size);
 
         auto h = (Handle)(uintptr_t)fd;
