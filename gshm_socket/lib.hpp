@@ -153,8 +153,9 @@ namespace gshm_socket {
 
         void shutdown() {
             auto& state = getStatePointer();
+            writeSignal(&state.shutdown, true); // 这个一定要写, 让 recv 退出
 
-            writeSignal(&state.shutdown, true);
+            if (state.isNotConnected) return;
             waitForSignal(&state.shutdownAck);
         }
 
