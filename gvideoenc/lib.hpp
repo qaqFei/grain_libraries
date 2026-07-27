@@ -94,11 +94,12 @@ namespace gvideoenc {
 
             for (uint64 offset = 0; offset + frameSamples <= audio->data.size(); offset += frameSamples) {
                 aFrame->data[0] = (uint8*)(audio->data.data() + offset);
-                aFrame->pts += aCodecCtx->frame_size;
 
                 if (avcodec_send_frame(aCodecCtx, aFrame) < 0) {
                     std::cerr << "failed to send a frame" << std::endl;
                 }
+                
+                aFrame->pts += aCodecCtx->frame_size;
 
                 flush();
             }
