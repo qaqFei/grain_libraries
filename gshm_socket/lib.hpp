@@ -40,9 +40,9 @@ namespace gshm_socket {
             __sync_synchronize();
         }
 
-        void waitForSignal(volatile bool* signal1, volatile bool* signal2) { // 有一个完成即可
+        void waitForSignal(volatile bool* signal1, volatile bool* signal2, volatile bool* signal3) { // 有一个完成即可
             __sync_synchronize();
-            while (!*signal1 && !*signal2) sleepForAWhile();
+            while (!*signal1 && !*signal2 && !*signal3) sleepForAWhile();
             __sync_synchronize();
         }
 
@@ -102,11 +102,12 @@ namespace gshm_socket {
             volatile uint64* seq,
             volatile uint64* size,
             volatile bool* shutdown,
+            volatile bool* exit,
             const DataCallback& callback
         ) {
-            waitForSignal(ready, shutdown);
+            waitForSignal(ready, shutdown, exit);
 
-            if (readSignal(shutdown)) {
+            if (readSignal(shutdown) || readSignal(exit)) {
                 return;
             }
 
@@ -161,14 +162,21 @@ namespace gshm_socket {
             doRecv(
                 &state.receiverReady, &state.receiverReadyAck,
                 &state.receiverSeq, &state.receiverDataSize,
-                &state.shutdown,
+                &state.shutdown, &recvExit,
                 callback
             );
+
+            if (readSignal(&recvExit)) {
+                writeSignal(&recvExitAck, true);
+            }
         }
 
         void shutdown() {
             auto& state = getStatePointer();
-            writeSignal(&state.shutdown, true); // 这个一定要写, 让 recv 退出
+            writeSignal(&state.shutdown, true);
+
+            recvExit = true;
+            waitForSignal(&recvExitAck);
 
             if (state.isNotConnected) return;
             waitForSignal(&state.shutdownAck);
@@ -190,6 +198,8 @@ namespace gshm_socket {
         DataCallback callback;
         gsp<SharedMemory> mainMemory;
         gsp<SharedMemory> dataMemory;
+        volatile bool recvExit;
+        volatile bool recvExitAck;
 
         void init() {
             mainMemory = SharedMemory::Create(name, sizeof(ShmState));
@@ -250,13 +260,17 @@ namespace gshm_socket {
             doRecv(
                 &state.senderReady, &state.senderReadyAck,
                 &state.senderSeq, &state.senderDataSize,
-                &state.shutdown,
+                &state.shutdown, &recvExit,
                 callback
             );
 
             if (readSignal(&state.shutdown)) {
                 shutdown = true;
                 writeSignal(&state.shutdownAck, true);
+            }
+
+            if (readSignal(&recvExit)) {
+                writeSignal(&recvExitAck, true);
             }
         }
 
@@ -272,6 +286,9 @@ namespace gshm_socket {
             auto& state = getStatePointer();
             waitForSignal(&state.receiverReadyAck);
             writeSignal(&state.isNotConnected, true);
+
+            writeSignal(&recvExit, true);
+            waitForSignal(&recvExitAck);
         }
 
         private:
@@ -280,6 +297,8 @@ namespace gshm_socket {
         gsp<SharedMemory> mainMemory;
         gsp<SharedMemory> dataMemory;
         std::atomic<bool> shutdown;
+        volatile bool recvExit;
+        volatile bool recvExitAck;
 
         void init() {
             mainMemory = SharedMemory::Open(name);
