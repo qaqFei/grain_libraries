@@ -46,6 +46,10 @@ namespace gglfw3 {
         void create() {
             checkWindow(false);
 
+            if (isHiddenBeforeCreate) {
+                hint(GLFW_VISIBLE, GLFW_FALSE);
+            }
+
             if (width == 0) width = 800;
             if (height == 0) height = 600;
             width += width % 2; height += height % 2;
@@ -64,8 +68,7 @@ namespace gglfw3 {
                 if (self->mouseButtonCallback) self->mouseButtonCallback(button, action, mods);
             });
 
-            titleBeforeCreate = "";
-            setHidden(isHiddenBeforeCreate);
+            titleBeforeCreate = ""; // 虽然应该不占什么内存, 但还是释放了吧
             setSwapInterval(swapInterval);
             
             makeContextCurrent();
