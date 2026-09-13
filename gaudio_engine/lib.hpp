@@ -61,6 +61,8 @@ namespace gaudio_engine {
         }
 
         void callback(int16* buffer, int64 frameCount) noexcept {
+            auto callbackStartTime = gtime::steady();
+
             {
                 std::lock_guard<std::mutex> guard(mtx);
                 tasks.erase(std::remove_if(
@@ -75,6 +77,8 @@ namespace gaudio_engine {
             std::fill(bufferCache.begin(), bufferCache.end(), 0);
 
             for (const auto& task : tasksCopied) {
+                if (gtime::steady() - callbackStartTime > std::max((float64)frameCount / sampleRate - 0.001, 0.0)) break;
+
                 int64 startSample = currentOffset - task->offset;
                 int64 endSample = startSample + frameCount;
 
