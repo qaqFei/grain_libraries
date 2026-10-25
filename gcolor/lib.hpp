@@ -187,6 +187,15 @@ namespace gcolor {
             return {};
         }
 
+        static Color FromRGBA32Int(uint32 rgba) noexcept {
+            return Color {
+                (float64)((rgba >> 24) & 0xff) / 255.0,
+                (float64)((rgba >> 16) & 0xff) / 255.0,
+                (float64)((rgba >> 8) & 0xff) / 255.0,
+                (float64)(rgba & 0xff) / 255.0
+            };
+        }
+
         Color applyAlpha(float64 alpha) const noexcept { return Color { r, g, b, a * alpha }; }
         Color setAlpha(float64 alpha) const noexcept { return Color { r, g, b, alpha }; }
 
